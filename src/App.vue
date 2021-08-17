@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <line-chart :width="1000" :height="300" :chartdata="chartdata" :options="options" />
+    <div>
+      <line-chart v-if="loaded" :width="1200" :height="500" :chartdata="chartdata" :options="options" />
+    </div>
   </div>
 </template>
 
@@ -22,10 +24,18 @@
           datasets: []
         },
         options: {
-          // responsive: false,
-          // maintainAspectRatio: false
+          responsive: false,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 0
+          },
+          hover: {
+            animationDuration: 0
+          },
+          responsiveAnimationDuration: 0
         },
-        item: csvFile
+        item: csvFile,
+        loaded: false
       }
     },
     methods: {
@@ -88,6 +98,8 @@
           data: el.data,
           lineTension: 0
         }));
+
+        
       },
       getRandomColor() {
         const letters = '0123456789ABCDEF';
@@ -98,11 +110,20 @@
         return color;
       }
     },
-    mounted() {
-      this.parseCsv();
+    async mounted() {
+      this.loaded = false;
+      try {
+        await this.parseCsv();
+        this.loaded = true;
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 </script>
 
 <style>
+  #line-chart {
+    margin: auto;
+  }
 </style>
